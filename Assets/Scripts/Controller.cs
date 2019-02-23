@@ -12,7 +12,7 @@ public class Controller : MonoBehaviour
 
     public bool lastLevel;
 
-    public static int level = 0;
+    public static int level = 5;
 
     // Use this for initialization
     void Start()
