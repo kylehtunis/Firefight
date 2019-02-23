@@ -12,16 +12,20 @@ public class Firefighter : MonoBehaviour
     public int fireRate;
 
     private float timeSinceLastWater = 0;
-    Rigidbody2D rb;
+    //Rigidbody2D rb;
+    Vector3 pos;
+    Quaternion rot;
 
     // Use this for initialization
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        //rb = GetComponent<Rigidbody2D>();
+        pos = transform.position;
+        rot = transform.rotation;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
 
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > timeSinceLastWater + fireRate)
@@ -32,33 +36,57 @@ public class Firefighter : MonoBehaviour
 
         }
 
-        Vector3 input = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
-        //CharacterController control = GetComponent<CharacterController>();
 
-        Vector3 movement = new Vector3(0, 0, 0);
-        if (((transform.position.x <= 5 * (16.0f / 9.0f)) || input.x <= 0) &&
-            ((transform.position.x >= -5 * (16.0f / 9.0f)) || input.x >= 0))
-        {
-            movement += Vector3.right * Input.GetAxis("Horizontal");
+        if (Input.GetAxisRaw("Horizontal")<0 && transform.position == pos)
+        {        // Left
+            pos += Vector3.left;
+            rot = Quaternion.Euler(new Vector3(0, 0, 90));
         }
-        if (((transform.position.y <= 5) || input.y <= 0) && ((transform.position.y >= -5) || input.y >= 0))
-        {
-            movement += Vector3.up * Input.GetAxis("Vertical");
+        if (Input.GetAxisRaw("Horizontal")>0 && transform.position == pos)
+        {        // Right
+            pos += Vector3.right;
+            rot = Quaternion.Euler(new Vector3(0, 0, -90));
         }
-        if (movement.magnitude > 1)
-        {
-            movement.Normalize();
+        if (Input.GetAxisRaw("Vertical")>0 && transform.position == pos)
+        {        // Up
+            pos += Vector3.up;
+            rot = Quaternion.Euler(new Vector3(0, 0, 0));
         }
-        //transform.position += movement * speed * Time.deltaTime;
-        rb.velocity = movement * speed;
+        if (Input.GetAxisRaw("Vertical")<0 && transform.position == pos)
+        {        // Down
+            pos += Vector3.down;
+            rot = Quaternion.Euler(new Vector3(0, 0, -180));
+        }
+        transform.position = Vector3.MoveTowards(transform.position, pos, Time.deltaTime * speed);    // Move there
+        transform.rotation = rot;
+
+        //Vector3 input = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+        ////CharacterController control = GetComponent<CharacterController>();
+
+        //Vector3 movement = new Vector3(0, 0, 0);
+        //if (((transform.position.x <= 5 * (16.0f / 9.0f)) || input.x <= 0) &&
+        //    ((transform.position.x >= -5 * (16.0f / 9.0f)) || input.x >= 0))
+        //{
+        //    movement += Vector3.right * Input.GetAxis("Horizontal");
+        //}
+        //if (((transform.position.y <= 5) || input.y <= 0) && ((transform.position.y >= -5) || input.y >= 0))
+        //{
+        //    movement += Vector3.up * Input.GetAxis("Vertical");
+        //}
+        //if (movement.magnitude > 1)
+        //{
+        //    movement.Normalize();
+        //}
+        ////transform.position += movement * speed * Time.deltaTime;
+        //rb.velocity = movement * speed;
         //control.Move(movement * speed * Time.deltaTime);
 
 
-        if (Input.GetAxisRaw("Vertical")!=0|| Input.GetAxisRaw("Horizontal") != 0)
-        {
-            transform.rotation = Quaternion.Euler
-                (new Vector3(0, 0, (Mathf.Atan2(input.y, input.x) - Mathf.PI / 2) * Mathf.Rad2Deg));
-        }
+        //if (Input.GetAxisRaw("Vertical")!=0|| Input.GetAxisRaw("Horizontal") != 0)
+        //{
+        //    transform.rotation = Quaternion.Euler
+        //        (new Vector3(0, 0, (Mathf.Atan2(input.y, input.x) - Mathf.PI / 2) * Mathf.Rad2Deg));
+        //}
     }
 
     void OnTriggerEnter2D(Collider2D other)
