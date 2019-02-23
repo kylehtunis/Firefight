@@ -6,17 +6,26 @@ public class Fire : MonoBehaviour {
 
 	public GameObject firePrefab;
     public int gasSpawnNumber;
+    public float spawnRate;
 
 	private float lastSpawnTime = 0;
 
 
-	public void Update(){
-		if (Random.Range (0, 500) == 0&&Time.time>lastSpawnTime+1&&Controller.numberOfFires<Controller.maxNumberOfFires) {
-			lastSpawnTime = Time.time;
-			Vector2 randomPos = (Random.insideUnitCircle)*1.5f+new Vector2(transform.position.x, transform.position.y);
-			// instantiate brain prefab at random position (the function takes a vector3, so we need to create one)
-			Instantiate(firePrefab, new Vector3(randomPos.x, randomPos.y, 0), Quaternion.identity);
-		}
+	public void FixedUpdate(){
+        if (Random.value / spawnRate < .01 && Time.time > lastSpawnTime + spawnRate) 
+        {
+            Vector3 vec;
+            float rand = Random.value;
+            if (rand <= .25)
+                vec = new Vector3(1, 0, 0);
+            else if (rand <= .5)
+                vec = new Vector3(0, 1, 0);
+            else if (rand <= .75)
+                vec = new Vector3(-1, 0, 0);
+            else
+                vec = new Vector3(0, -1, 0);
+            Instantiate(firePrefab, transform.position+vec, Quaternion.identity);
+        }
 	}
 
     public void Awake()

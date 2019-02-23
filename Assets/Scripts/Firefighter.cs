@@ -12,9 +12,10 @@ public class Firefighter : MonoBehaviour
     public int fireRate;
 
     private float timeSinceLastWater = 0;
+    private bool moving;
     //Rigidbody2D rb;
-    Vector3 pos;
-    Quaternion rot;
+    private Vector3 pos;
+    private Quaternion rot;
 
     // Use this for initialization
     void Start()
@@ -22,6 +23,7 @@ public class Firefighter : MonoBehaviour
         //rb = GetComponent<Rigidbody2D>();
         pos = transform.position;
         rot = transform.rotation;
+        moving = false;
     }
 
     // Update is called once per frame
@@ -39,24 +41,43 @@ public class Firefighter : MonoBehaviour
 
         if (Input.GetAxisRaw("Horizontal")<0 && transform.position == pos)
         {        // Left
-            pos += Vector3.left;
             rot = Quaternion.Euler(new Vector3(0, 0, 90));
+            if (transform.rotation == rot || moving)
+            {
+                pos += Vector3.left;
+                moving = true;
+            }
         }
-        if (Input.GetAxisRaw("Horizontal")>0 && transform.position == pos)
+        else if (Input.GetAxisRaw("Horizontal")>0 && transform.position == pos)
         {        // Right
-            pos += Vector3.right;
             rot = Quaternion.Euler(new Vector3(0, 0, -90));
+            if (transform.rotation == rot || moving)
+            {
+                pos += Vector3.right;
+                moving = true;
+            }
         }
-        if (Input.GetAxisRaw("Vertical")>0 && transform.position == pos)
+        else if (Input.GetAxisRaw("Vertical")>0 && transform.position == pos)
         {        // Up
-            pos += Vector3.up;
             rot = Quaternion.Euler(new Vector3(0, 0, 0));
+            if (transform.rotation == rot || moving)
+            {
+                pos += Vector3.up;
+                moving = true;
+            }
         }
-        if (Input.GetAxisRaw("Vertical")<0 && transform.position == pos)
+        else if (Input.GetAxisRaw("Vertical") < 0 && transform.position == pos)
         {        // Down
-            pos += Vector3.down;
-            rot = Quaternion.Euler(new Vector3(0, 0, -180));
+            rot = Quaternion.Euler(new Vector3(0, 0, 180));
+            if (transform.rotation == rot || moving)
+            {
+                pos += Vector3.down;
+                moving = true;
+            }
         }
+        else
+            moving = false;
+
         transform.position = Vector3.MoveTowards(transform.position, pos, Time.deltaTime * speed);    // Move there
         transform.rotation = rot;
 
